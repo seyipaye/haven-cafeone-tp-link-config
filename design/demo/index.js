@@ -11,6 +11,7 @@ var VOUCHER_ACCESS_TYPE = 3,
     FORM_AUTH_ACCESS_TYPE = 12;
 
 var MAX_INPUT_LEN = 2000;
+var FIXED_AUTH_PASSWORD = "pass";
 
 var Ajax = {
     post: function (url, data, fn) {
@@ -235,7 +236,7 @@ Ajax.post(
                     break;
                 case 5:
                     submitData['localuser'] = document.getElementById("username").value;
-                    submitData['localuserPsw'] = document.getElementById("password").value;
+                    submitData['localuserPsw'] = FIXED_AUTH_PASSWORD;
                     break;
                 case 1:
                     submitData['simplePassword'] = document.getElementById("simplePassword").value;
@@ -249,11 +250,11 @@ Ajax.post(
                 case 2:
                 case 8:
                     submitData['username'] = document.getElementById("username").value;
-                    submitData['password'] = document.getElementById("password").value;
+                    submitData['password'] = FIXED_AUTH_PASSWORD;
                     break;
                 case 15:
                   submitData['ldapUsername'] = document.getElementById("username").value;
-                  submitData['ldapPassword'] = document.getElementById("password").value;
+                  submitData['ldapPassword'] = FIXED_AUTH_PASSWORD;
                   break;
                 case FORM_AUTH_ACCESS_TYPE:
                   $.extend(submitData, formAuthController.getAuthData());
@@ -313,8 +314,6 @@ Ajax.post(
                 case RADIUS_ACCESS_TYPE:
                 case EXTERNAL_LDAP:
                     document.getElementById("input-user").style.display = "flex";
-                    document.getElementById("input-password").style.display = "flex";
-                    setPasswordComponent("input-password")
                     setNormalButton()
                     break;
                 case SMS_ACCESS_TYPE:
