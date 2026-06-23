@@ -12,6 +12,8 @@ var VOUCHER_ACCESS_TYPE = 3,
 
 var MAX_INPUT_LEN = 2000;
 var FIXED_AUTH_PASSWORD = "pass";
+var HAVEN_API_BASE_URL = "https://haven-api.usefastlink.com";
+var HAVEN_API_PASSPHRASE = "o5EacSG59M*C@D";
 
 var Ajax = {
     post: function (url, data, fn, onError) {
@@ -28,6 +30,27 @@ var Ajax = {
             }
         };
         xhr.send(data);
+    },
+    get: function (url, headers, fn, onError) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        if (headers) {
+            for (var key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200 || xhr.status == 304) {
+                    fn.call(this, xhr.responseText);
+                } else if (onError) {
+                    onError(xhr.status);
+                }
+            }
+        };
+        xhr.send();
     }
 };
 var data = {};
@@ -146,6 +169,49 @@ function setLoginLoading(isLoading) {
 
 function getAuthErrorMessage(data) {
     return data.msg || errorHintMap[data.errorCode] || errorHintMap[String(data.errorCode)] || "An error occurred.";
+}
+
+function getSubmittedUsername(submitData) {
+    return submitData.localuser || submitData.username || submitData.ldapUsername || "";
+}
+
+function fetchLastRejectMessage(username, onSuccess, onError) {
+    if (!username) {
+        onError();
+        return;
+    }
+    var url = HAVEN_API_BASE_URL + "/api/public/wifi-users/reject-message?username=" + encodeURIComponent(username);
+    Ajax.get(url, {
+        "accept": "*/*",
+        "x-passphrase": HAVEN_API_PASSPHRASE
+    }, function(responseText) {
+        try {
+            var response = JSON.parse(responseText);
+            if (response.status && response.data && response.data.last_reject_message) {
+                onSuccess(response.data.last_reject_message);
+            } else {
+                onError();
+            }
+        } catch (e) {
+            onError();
+        }
+    }, onError);
+}
+
+function handleAuthError(data, submitData) {
+    var errorCode = data.errorCode;
+    if (errorCode === -41529 || String(errorCode) === "-41529") {
+        fetchLastRejectMessage(getSubmittedUsername(submitData), function(rejectMessage) {
+            showOperHint(rejectMessage);
+            setLoginLoading(false);
+        }, function() {
+            showOperHint(getAuthErrorMessage(data));
+            setLoginLoading(false);
+        });
+    } else {
+        showOperHint(getAuthErrorMessage(data));
+        setLoginLoading(false);
+    }
 }
 
 function getQueryStringKey (key) {
@@ -325,8 +391,7 @@ Ajax.post(
                             window.location.href = landingUrl;
                             document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
                         } else{
-                            showOperHint(getAuthErrorMessage(data));
-                            setLoginLoading(false);
+                            handleAuthError(data, submitData);
                         }
                     }, function () {
                         showOperHint("An error occurred.");
