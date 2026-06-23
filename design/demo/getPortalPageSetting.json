@@ -1,0 +1,154 @@
+{
+    "errorCode": 0,
+    "result": {
+        "site": "Default",
+        "authType": 11,
+        "hotspot": {
+            "enabledTypes": [
+                3, 5, 6, 8, 12
+            ]
+        },
+        "socialLogin": {
+            "enabledTypes": [
+                17
+            ]
+        },
+        "formAuth": {
+            "id": "2",
+            "title": "<script>alert('Form Auth Title 2')</script>",
+            "note": "<script>alert('Form Auth Note 2')</script>",
+            "name": "<script>alert('Form Auth Profile Name2')</script>",
+            "cardList": [
+                {
+                    "title": "<script>alert('Single Choice')</script>",
+                    "type": 0,
+                    "required": true,
+                    "others": "<script>alert('Others')</script>",
+                    "choices": [
+                        "<script>alert('Select 1')</script>",
+                        "<script>alert('Select 2')</script>",
+                        "<script>alert('Select 3')</script>"
+                    ]
+                },
+                {
+                    "title": "<script>alert('Multiple Choice')</script>",
+                    "type": 1,
+                    "required": true,
+                    "others": "<script>alert('Others')</script>",
+                    "choices": [
+                        "<script>alert('Select 1')</script>",
+                        "<script>alert('Select 2')</script>",
+                        "<script>alert('Select 3')</script>"
+                    ]
+                },
+                {
+                    "title": "<script>alert('ComboBox')</script>",
+                    "type": 2,
+                    "required": true,
+                    "others": "<script>alert('Others')</script>",
+                    "choices": [
+                        "<script>alert('Select 1')</script>",
+                        "<script>alert('Select 1')</script>",
+                        "<script>alert('Select 1')</script>"
+                    ]
+                },
+                {
+                    "title": "<script>alert('Input')</script>",
+                    "type": 3,
+                    "required": true
+                },
+                {
+                    "title": "<script>alert('Note')</script>",
+                    "type": 5
+                },
+                {
+                    "title": "<script>alert('Score')</script>",
+                    "type": 4,
+                    "required": true,
+                    "scoreNotes": ["<script>alert('1')</script>", "2", "3", "4", "5"]
+                }
+            ]
+        },
+        "landingUrl": "https://www.baidu.com/",
+        "portalCustomize": {
+            "defaultLanguage": 1,
+            "background": 2,
+            "backgroundPictureUrl": "",
+            "mobileBackgroundPictureUrl": "https://ts1.cn.mm.bing.net/th/id/R-C.6b5df1bfe0e4778a44dba0753cd169c8?rik=QRQIMqvjWRCO5Q&riu=http%3a%2f%2fpic39.nipic.com%2f20140321%2f8857347_232251363165_2.jpg&ehk=7oAaMo6LCHJc%2bqpQ0IPvcH7v69jGRQhb2vDz%2fOd5720%3d&risl=&pid=ImgRaw&r=0",
+            "backgroundColor": "#00CCCB",
+            "backgroundOpacity": 80,
+            "logoDisplay": 1,
+            "logoPictureUrl":"",
+            "logoPosition": 1,
+            "logoHorizontalPosition": 2,
+            "logoTranslate": 10,
+            "logoSize": 100,
+            "inputBoxStyle": 0,
+            "inputBoxRadius": 10,
+            "inputBoxColor": "#ffffff",
+            "inputBoxOpacity": 100,
+            "inputTextColor": "#bbbbbb",
+            "inputTextOpacity": 100,
+
+            "bodyContainerEnable": false,
+            "bodyContainerType": 1,
+            "bodyContainerColor": "#21d61f",
+            "bodyContainerOpacity": 10,
+            "bodyContainerRadius": 20,
+            "bodyContainerBgBlurEnable": true,
+            "bodyContainerBgBlur": 5,
+
+            "buttonText": "Log In",
+            "formAuthButtonText": "Take the Survey",
+            "buttonColor": "#00A870",
+            "buttonOpacity": 100,
+            "buttonTextColor": "#ffffff",
+            "buttonTextOpacity": 100,
+            "buttonPosition": 2,
+            "buttonRadius": 10,
+            "welcomeEnable": false,
+            "welcomeInformation": "welcomewelcomewelcomewelcomessssss",
+            "welcomeTextColor": "#ffffff",
+            "welcomeTextOpacity": 100,
+            "welcomeTextFontSize": 18,
+            "termsOfServiceEnable": true,
+            "termsOfService": "By accepting this agreement and accessing the wireless network, you acknowledge that you are of legal age, you have read and understood, and agree to be bound by this agreement.",
+            "termsOfServiceText": "I agree to Terms of Service and sthut to \npermance the additional service and to trys against",
+            "termsOfServiceFontSize": 18,
+            "termsOfServiceUrlTexts": [
+                {
+                    "content": "By accepting this agreement and accessing the wireless network, you acknowledge that you are of legal age, you have read and understood, and agree to be bound by this agreement.",
+                    "text": "Terms of Service"
+                },
+                {
+                    "content": "Log In Copyright © 2021 <script>alert(123)</script>\nTP-Link Corporation Limited.Service2",
+                    "text": "the additional service"
+                }
+            ],
+            "copyrightEnable": true,
+            "copyright": "Log In Copyright © 2021 TP-Link Corporation Limited. All rights reserved.f<script>alert(123)</script>\newafewafeawfewfaewfewfaewwwwwwwwwwwwwwwwwwwwwwwwwwwwwwfewfewfefe",
+            "copyrightTextColor": "#ffffff",
+            "copyrightTextOpacity": 100,
+            "copyrightTextFontSize": 18,
+            "redirectionCountDownEnable": true,
+            "advertisement": {
+                "enable": false,
+                "pictureUrls": [
+                    "https://cdn.pixabay.com/photo/2020/05/18/16/17/social-media-5187243_1280.png",
+                    "https://cdn.pixabay.com/photo/2016/10/11/21/43/geometric-1732847_1280.jpg",
+                    "https://cdn.pixabay.com/photo/2018/01/10/23/53/rabbit-3075088_1280.png"
+                ],
+                "totalDuration": 30,
+                "pictureInterval": 5,
+                "skipEnable": true,
+                "skipDelay": 5
+            },
+            "multipleLanguage": true,
+            "modifyTimeMs": 1
+        },
+        "sms": {
+            "countryCode": "86"
+        },
+        "cType": 0
+    }
+}
