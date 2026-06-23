@@ -14,13 +14,17 @@ var MAX_INPUT_LEN = 2000;
 var FIXED_AUTH_PASSWORD = "pass";
 
 var Ajax = {
-    post: function (url, data, fn) {
+    post: function (url, data, fn, onError) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
-                fn.call(this, xhr.responseText);
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200 || xhr.status == 304) {
+                    fn.call(this, xhr.responseText);
+                } else if (onError) {
+                    onError(xhr.status);
+                }
             }
         };
         xhr.send(data);
@@ -112,6 +116,38 @@ var errorHintMap = {
 var isCommited;
 var formAuthController = useFormAuthController()
 
+function showOperHint(message) {
+    var hint = document.getElementById("oper-hint");
+    hint.innerHTML = message;
+    hint.style.display = "block";
+}
+
+function hideOperHint() {
+    var hint = document.getElementById("oper-hint");
+    hint.innerHTML = "";
+    hint.style.display = "none";
+}
+
+function setLoginLoading(isLoading) {
+    var button = document.getElementById("button-login");
+    if (isLoading) {
+        if (!button.dataset.defaultText) {
+            button.dataset.defaultText = button.innerHTML;
+        }
+        button.disabled = true;
+        button.classList.add("loading");
+        button.innerHTML = "Logging in...";
+    } else {
+        button.disabled = false;
+        button.classList.remove("loading");
+        button.innerHTML = button.dataset.defaultText || globalConfig.buttonText || "Log In";
+    }
+}
+
+function getAuthErrorMessage(data) {
+    return data.msg || errorHintMap[data.errorCode] || errorHintMap[String(data.errorCode)] || "An error occurred.";
+}
+
 function getQueryStringKey (key) {
     return getQueryStringAsObject()[key];
 }
@@ -186,8 +222,7 @@ Ajax.post(
         }
         function pageConfigParse(){
             if (res.errorCode !== 0){
-                document.getElementById("oper-hint").style.display = "block";
-                document.getElementById("oper-hint").innerHTML = errorHintMap[res.errorCode];
+                showOperHint(errorHintMap[res.errorCode] || errorHintMap[String(res.errorCode)]);
             }
             document.getElementById("hotspot-other-login").style.display = "none";
             document.getElementById("hotspot-selector").style.display = "none";
@@ -228,6 +263,7 @@ Ajax.post(
         }
 
         function handleSubmit(){
+            hideOperHint();
             var submitData = {};
             submitData['authType'] = window.authType;
             switch (window.authType){
@@ -280,6 +316,7 @@ Ajax.post(
                     submitData['originUrl'] = originUrl;
                 }
                 function doAuth () {
+                    setLoginLoading(true);
                     Ajax.post(submitUrl, JSON.stringify(submitData).toString(), function(data){
                         data = JSON.parse(data);
                         if(!!data && data.errorCode === 0) {
@@ -288,8 +325,12 @@ Ajax.post(
                             window.location.href = landingUrl;
                             document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
                         } else{
-                            document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
+                            showOperHint(getAuthErrorMessage(data));
+                            setLoginLoading(false);
                         }
+                    }, function () {
+                        showOperHint("An error occurred.");
+                        setLoginLoading(false);
                     });
                 }
                 doAuth();
@@ -385,15 +426,15 @@ Ajax.post(
                     }),function(data){
                         data = JSON.parse(data);
                         if(data.errorCode !== 0){
-                            document.getElementById("oper-hint").innerHTML = errorHintMap[data.errorCode];
+                            showOperHint(getAuthErrorMessage(data));
                         } else {
-                            document.getElementById("oper-hint").innerHTML = "SMS has been sent successfully.";
+                            showOperHint("SMS has been sent successfully.");
                         }
                     }
                 );
             }
             sendSmsAuthCode();
-            document.getElementById("oper-hint").innerHTML = "Sending Authorization Code...";
+            showOperHint("Sending Authorization Code...");
         });
         pageConfigParse();
     }
@@ -1025,7 +1066,10 @@ function escapeHtml(string) {
 };
 
 function setNormalButton() {
-    $("#button-login").html(globalConfig.buttonText);
+    var text = globalConfig.buttonText;
+    var button = document.getElementById("button-login");
+    button.innerHTML = text;
+    button.dataset.defaultText = text;
 }
 
 function setPasswordComponent(id) {

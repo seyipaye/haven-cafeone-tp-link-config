@@ -4,6 +4,7 @@ const path = require("path");
 
 const PORT = 8045;
 const ROOT = __dirname;
+const AUTH_RESPONSE_DELAY_MS = 2000;
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -71,10 +72,12 @@ async function handlePortalApi(req, res) {
       url === "/portal/radius/auth" ||
       url === "/portal/ldap/auth")
   ) {
-    sendJson(res, 200, {
-      errorCode: 0,
-      result: portalSettings.result.landingUrl || "https://example.com",
-    });
+    setTimeout(function () {
+      sendJson(res, 200, {
+        errorCode: -41529,
+        msg: "Incorrect username or password.",
+      });
+    }, AUTH_RESPONSE_DELAY_MS);
     return;
   }
 

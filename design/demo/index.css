@@ -144,6 +144,31 @@ body.portal.mobile {
     color: #ffffff;
 }
 
+#button-login:disabled,
+#button-login.loading {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+#button-login.loading::after {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 8px;
+    vertical-align: middle;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: login-spin 0.8s linear infinite;
+}
+
+@keyframes login-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .input-container {
   position: relative;
   display: flex;
