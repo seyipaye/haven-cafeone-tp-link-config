@@ -6,8 +6,7 @@ var HAVEN_API_PASSPHRASE = "o5EacSG59M*C@D";
 var USERNAME_STORAGE_KEY = "external_html_last_username";
 
 var PORTAL_CONFIG = {
-    buttonText: "Log In",
-    landingUrl: ""
+    buttonText: "Log In"
 };
 
 var errorHintMap = {
@@ -95,44 +94,33 @@ function getQueryStringAsObject() {
     return r;
 }
 
+function normalizeScheme(schemeValue, portValue) {
+    if (schemeValue && schemeValue !== "null" && schemeValue !== "undefined") {
+        return schemeValue;
+    }
+    return String(portValue) === "8843" ? "https" : "http";
+}
+
 function buildSubmitUrl(schemeValue, targetValue, portValue) {
-    if (!schemeValue || !targetValue || !portValue) {
+    if (!targetValue || !portValue) {
         return null;
     }
-    return schemeValue + "://" + targetValue + ":" + portValue + "/portal/radius/browserauth";
+    return normalizeScheme(schemeValue, portValue) + "://" + targetValue + ":" + portValue + "/portal/radius/browserauth";
 }
 
-function decodeOriginUrl(value) {
-    if (value == null || value === "" || value === "null" || value === "undefined") {
-        return null;
+function toFieldValue(value) {
+    if (value == null || value === "null" || value === "undefined") {
+        return "";
     }
-    try {
-        return decodeURIComponent(value);
-    } catch (e) {
-        return value;
-    }
+    return value;
 }
 
-function resolveOriginUrl(rawOriginUrl, schemeValue) {
-    var originUrl = decodeOriginUrl(rawOriginUrl) || PORTAL_CONFIG.landingUrl || null;
-    if (!originUrl) {
-        return null;
-    }
-    if (/^https?:\/\//i.test(originUrl)) {
-        return originUrl;
-    }
-    if (schemeValue) {
-        return schemeValue + "://" + originUrl.replace(/^\/\//, "");
-    }
-    return "http://" + originUrl.replace(/^\/\//, "");
-}
-
-function setFieldValue(id, value) {
+function setOptionalFieldValue(id, value) {
     var field = document.getElementById(id);
     if (!field) {
         return;
     }
-    if (value == null || value === "") {
+    if (value == null || value === "" || value === "null" || value === "undefined") {
         field.removeAttribute("name");
         field.value = "";
         return;
@@ -223,7 +211,7 @@ function fetchLastRejectMessage(username, onSuccess, onError) {
 }
 
 function handleReturnedErrorHint(errorHint) {
-    if (errorHint == null || errorHint === "") {
+    if (errorHint == null || errorHint === "" || errorHint === "null") {
         return;
     }
 
@@ -256,22 +244,21 @@ function populateHiddenFields() {
     var ssidName = getQueryStringKey("ssidName");
     var radioId = getQueryStringKey("radioId");
     var vid = getQueryStringKey("vid");
-    var originUrl = resolveOriginUrl(getQueryStringKey("originUrl"), scheme);
+    var originUrl = getQueryStringKey("originUrl") || getQueryStringKey("redirectUrl") || getQueryStringKey("originalUrl");
 
     if (apMac && gatewayMac) {
         apMac = "";
     }
 
-    setFieldValue("clientMac", clientMac);
-    setFieldValue("clientIp", clientIp);
-    setFieldValue("apMac", apMac);
-    setFieldValue("gatewayMac", gatewayMac);
-    setFieldValue("ssidName", ssidName);
-    setFieldValue("radioId", radioId);
-    setFieldValue("vid", vid);
-    setFieldValue("authType", String(EXTERNAL_RADIUS));
-    setFieldValue("scheme", scheme);
-    setFieldValue("originUrl", originUrl);
+    document.getElementById("clientMac").value = toFieldValue(clientMac);
+    document.getElementById("clientIp").value = toFieldValue(clientIp);
+    document.getElementById("apMac").value = toFieldValue(apMac);
+    setOptionalFieldValue("gatewayMac", gatewayMac);
+    document.getElementById("ssidName").value = toFieldValue(ssidName);
+    document.getElementById("radioId").value = toFieldValue(radioId);
+    setOptionalFieldValue("vid", vid);
+    document.getElementById("authType").value = String(EXTERNAL_RADIUS);
+    document.getElementById("originUrl").value = toFieldValue(originUrl);
     document.getElementById("password").value = FIXED_AUTH_PASSWORD;
 
     if (submitUrl) {
