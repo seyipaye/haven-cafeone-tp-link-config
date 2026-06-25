@@ -4,17 +4,22 @@ var FIXED_AUTH_PASSWORD = "pass";
 var HAVEN_API_BASE_URL = "https://haven-api.usefastlink.com";
 var HAVEN_API_PASSPHRASE = "o5EacSG59M*C@D";
 
+var PORTAL_CONFIG = {
+    buttonText: "Log In",
+    landingUrl: ""
+};
+
 var Ajax = {
     post: function (url, data, fn, onError) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200 || xhr.status == 304) {
                     fn.call(this, xhr.responseText);
                 } else if (onError) {
-                    onError(xhr.status);
+                    onError(xhr.status, xhr.statusText);
                 }
             }
         };
@@ -43,21 +48,52 @@ var Ajax = {
     }
 };
 
-var data = {};
-var globalConfig = {};
-var submitUrl = "/portal/radius/auth";
+var globalConfig = PORTAL_CONFIG;
+var isCommited = false;
+
+var scheme = getQueryStringKey("scheme");
+var target = getQueryStringKey("target");
+var targetPort = getQueryStringKey("targetPort");
+var submitUrl = buildSubmitUrl(scheme, target, targetPort);
+
 var clientMac = getQueryStringKey("clientMac");
+var clientIp = getQueryStringKey("clientIp") || getQueryStringKey("clientIP");
 var apMac = getQueryStringKey("apMac");
-var gatewayMac = getQueryStringKey("gatewayMac") || undefined;
+var gatewayMac = getQueryStringKey("gatewayMac") || getQueryStringKey("GatewayMac");
 var ssidName = getQueryStringKey("ssidName") || undefined;
-var radioId = !!getQueryStringKey("radioId") ? Number(getQueryStringKey("radioId")) : undefined;
-var vid = !!getQueryStringKey("vid") ? Number(getQueryStringKey("vid")) : undefined;
-var originUrl = getQueryStringKey("originUrl");
+var radioId = getQueryStringKey("radioId") != null ? Number(getQueryStringKey("radioId")) : undefined;
+var vid = getQueryStringKey("vid") != null ? Number(getQueryStringKey("vid")) : undefined;
+var originUrl = decodeOriginUrl(getQueryStringKey("originUrl"));
+
+function buildSubmitUrl(schemeValue, targetValue, portValue) {
+    if (!schemeValue || !targetValue || !portValue) {
+        return null;
+    }
+    return schemeValue + "://" + targetValue + ":" + portValue + "/portal/radius/auth";
+}
+
+function decodeOriginUrl(value) {
+    if (value == null || value === "") {
+        return undefined;
+    }
+    try {
+        return decodeURIComponent(value);
+    } catch (e) {
+        return value;
+    }
+}
+
+function omitEmpty(value) {
+    if (value == null || value === "") {
+        return undefined;
+    }
+    return value;
+}
 
 function isMobile() {
     var isMobileDevice = false;
     var regExp1 = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
-    var regExp2 = /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i;
+    var regExp2 = /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0|0|1|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i;
     var navigators = [navigator.userAgent, navigator.vendor, window.opera];
     for (var i = 0; i < navigators.length; i++) {
         if (!navigators[i]) {
@@ -81,6 +117,7 @@ function isMobile() {
 var errorHintMap = {
     "0": "ok",
     "-1": "General error.",
+    "-1001": "Invalid request parameters.",
     "-41500": "Invalid authentication type.",
     "-41501": "Failed to authenticate.",
     "-41505": "The number of users has reached the limit.",
@@ -97,8 +134,6 @@ var errorHintMap = {
     "-41530": "Connecting to the RADIUS server times out.",
     "-41532": "Your account have reached your Wi-Fi data limit."
 };
-
-var isCommited;
 
 function showOperHint(message) {
     var hint = document.getElementById("oper-hint");
@@ -177,7 +212,7 @@ function getQueryStringKey(key) {
 
 function getQueryStringAsObject() {
     var b, cv, e, k, ma, sk, v, r = {},
-        d = function (v) { return decodeURIComponent(v); },
+        d = function (v) { return decodeURIComponent(v.replace(/\+/g, "%20")); },
         q = window.location.search.substring(1),
         s = /([^&;=]+)=?([^&;]*)/g;
     ma = function(v) {
@@ -218,6 +253,36 @@ function setNormalButton() {
     button.dataset.defaultText = text;
 }
 
+function buildSubmitData(username) {
+    var resolvedApMac = omitEmpty(apMac);
+    var resolvedGatewayMac = omitEmpty(gatewayMac);
+
+    if (resolvedApMac && resolvedGatewayMac) {
+        resolvedApMac = undefined;
+    }
+
+    var submitData = {
+        authType: EXTERNAL_RADIUS,
+        username: username,
+        password: FIXED_AUTH_PASSWORD,
+        clientMac: clientMac,
+        clientIp: clientIp,
+        ssidName: ssidName,
+        radioId: radioId,
+        vid: vid,
+        originUrl: originUrl
+    };
+
+    if (resolvedApMac) {
+        submitData.apMac = resolvedApMac;
+    }
+    if (resolvedGatewayMac) {
+        submitData.gatewayMac = resolvedGatewayMac;
+    }
+
+    return submitData;
+}
+
 function handleSubmit() {
     hideOperHint();
 
@@ -225,64 +290,56 @@ function handleSubmit() {
         return;
     }
 
-    var username = document.getElementById("username").value;
-    var submitData = {
-        authType: EXTERNAL_RADIUS,
-        username: username,
-        password: FIXED_AUTH_PASSWORD,
-        clientMac: clientMac,
-        apMac: apMac,
-        gatewayMac: gatewayMac,
-        ssidName: ssidName,
-        radioId: radioId,
-        vid: vid
-    };
+    if (!submitUrl) {
+        showOperHint("Missing Omada controller parameters. Open this page through the captive portal redirect.");
+        return;
+    }
+
+    var username = document.getElementById("username").value.trim();
+    if (!username) {
+        showOperHint("Please enter your email.");
+        return;
+    }
 
     setLoginLoading(true);
-    Ajax.post(submitUrl, JSON.stringify(submitData), function(responseText) {
+    Ajax.post(submitUrl, JSON.stringify(buildSubmitData(username)), function(responseText) {
         var response = JSON.parse(responseText);
         if (response && response.errorCode === 0) {
             isCommited = true;
-            var landingUrl = response.result || data.landingUrl;
-            window.location.href = landingUrl;
+            var landingUrl = response.result || PORTAL_CONFIG.landingUrl || originUrl;
+            if (landingUrl) {
+                window.location.href = landingUrl;
+            } else {
+                showOperHint("Authentication succeeded, but no redirect URL was provided.");
+                setLoginLoading(false);
+            }
         } else {
             handleAuthError(response, username);
         }
-    }, function() {
-        showOperHint("An error occurred.");
+    }, function(status, statusText) {
+        if (status === 0) {
+            showOperHint("Unable to reach the Omada controller. Check CORS settings and controller connectivity.");
+        } else {
+            showOperHint(statusText || "An error occurred.");
+        }
         setLoginLoading(false);
     });
 }
 
-Ajax.post(
-    "/portal/getPortalPageSetting",
-    JSON.stringify({
-        clientMac: clientMac,
-        apMac: apMac,
-        gatewayMac: gatewayMac,
-        ssidName: ssidName,
-        radioId: radioId,
-        vid: vid,
-        originUrl: originUrl
-    }),
-    function(res) {
-        res = JSON.parse(res);
-        data = res.result;
-        isCommited = false;
+function initPortal() {
+    setNormalButton();
+    document.getElementById("button-login").addEventListener("click", handleSubmit);
+    document.getElementById("login-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        handleSubmit();
+    });
 
-        globalConfig = {
-            authType: data.authType,
-            buttonText: data.portalCustomize.buttonText || "Log In"
-        };
-
-        if (res.errorCode !== 0) {
-            showOperHint(errorHintMap[res.errorCode] || errorHintMap[String(res.errorCode)]);
-        }
-
-        setNormalButton();
-        document.getElementById("button-login").addEventListener("click", handleSubmit);
+    if (!submitUrl) {
+        showOperHint("Waiting for Omada redirect parameters (target, targetPort, scheme).");
     }
-);
+}
+
+initPortal();
 
 if (isMobile()) {
     document.body.classList.add("mobile");
