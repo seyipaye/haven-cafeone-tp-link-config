@@ -54,79 +54,22 @@ var Ajax = {
     }
 };
 
-function getQueryStringKey(key) {
-    return getQueryStringAsObject()[key];
-}
-
-function getQueryStringAsObject() {
-    var b, cv, e, k, ma, sk, v, r = {},
-        d = function (value) { return decodeURIComponent(value.replace(/\+/g, "%20")); },
-        q = window.location.search.substring(1),
-        s = /([^&;=]+)=?([^&;]*)/g;
-    ma = function(value) {
-        if (typeof value != "object") {
-            cv = value;
-            value = {};
-            value.length = 0;
-            if (cv) { Array.prototype.push.call(value, cv); }
-        }
-        return value;
-    };
-    while (e = s.exec(q)) {
-        b = e[1].indexOf("[");
-        v = d(e[2]);
-        if (b < 0) {
-            k = d(e[1]);
-            if (r[k]) {
-                r[k] = ma(r[k]);
-                Array.prototype.push.call(r[k], v);
-            } else {
-                r[k] = v;
-            }
-        } else {
-            k = d(e[1].slice(0, b));
-            sk = d(e[1].slice(b + 1, e[1].indexOf("]", b)));
-            r[k] = ma(r[k]);
-            if (sk) { r[k][sk] = v; }
-            else { Array.prototype.push.call(r[k], v); }
-        }
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return decodeURIComponent(r[2]);
     }
-    return r;
+    return null;
 }
 
-function normalizeScheme(schemeValue, portValue) {
-    if (schemeValue && schemeValue !== "null" && schemeValue !== "undefined") {
-        return schemeValue;
-    }
-    return String(portValue) === "8843" ? "https" : "http";
-}
-
-function buildSubmitUrl(schemeValue, targetValue, portValue) {
-    if (!targetValue || !portValue) {
+function buildSubmitUrl() {
+    var target = getQueryString("target");
+    var targetPort = getQueryString("targetPort");
+    if (!target || !targetPort) {
         return null;
     }
-    return normalizeScheme(schemeValue, portValue) + "://" + targetValue + ":" + portValue + "/portal/radius/browserauth";
-}
-
-function toFieldValue(value) {
-    if (value == null || value === "null" || value === "undefined") {
-        return "";
-    }
-    return value;
-}
-
-function setOptionalFieldValue(id, value) {
-    var field = document.getElementById(id);
-    if (!field) {
-        return;
-    }
-    if (value == null || value === "" || value === "null" || value === "undefined") {
-        field.removeAttribute("name");
-        field.value = "";
-        return;
-    }
-    field.setAttribute("name", id);
-    field.value = value;
+    return "http://" + target + ":" + targetPort + "/portal/radius/browserauth";
 }
 
 function isMobile() {
@@ -211,7 +154,7 @@ function fetchLastRejectMessage(username, onSuccess, onError) {
 }
 
 function handleReturnedErrorHint(errorHint) {
-    if (errorHint == null || errorHint === "" || errorHint === "null") {
+    if (errorHint == null || errorHint === "") {
         return;
     }
 
@@ -231,34 +174,16 @@ function handleReturnedErrorHint(errorHint) {
 }
 
 function populateHiddenFields() {
-    var scheme = getQueryStringKey("scheme");
-    var target = getQueryStringKey("target");
-    var targetPort = getQueryStringKey("targetPort");
-    var submitUrl = buildSubmitUrl(scheme, target, targetPort);
+    var submitUrl = buildSubmitUrl();
     var form = document.getElementById("login-form");
 
-    var clientMac = getQueryStringKey("clientMac");
-    var clientIp = getQueryStringKey("clientIp") || getQueryStringKey("clientIP");
-    var apMac = getQueryStringKey("apMac");
-    var gatewayMac = getQueryStringKey("gatewayMac") || getQueryStringKey("GatewayMac");
-    var ssidName = getQueryStringKey("ssidName");
-    var radioId = getQueryStringKey("radioId");
-    var vid = getQueryStringKey("vid");
-    var originUrl = getQueryStringKey("originUrl") || getQueryStringKey("redirectUrl") || getQueryStringKey("originalUrl");
-
-    if (apMac && gatewayMac) {
-        apMac = "";
-    }
-
-    document.getElementById("clientMac").value = toFieldValue(clientMac);
-    document.getElementById("clientIp").value = toFieldValue(clientIp);
-    document.getElementById("apMac").value = toFieldValue(apMac);
-    setOptionalFieldValue("gatewayMac", gatewayMac);
-    document.getElementById("ssidName").value = toFieldValue(ssidName);
-    document.getElementById("radioId").value = toFieldValue(radioId);
-    setOptionalFieldValue("vid", vid);
-    document.getElementById("authType").value = String(EXTERNAL_RADIUS);
-    document.getElementById("originUrl").value = toFieldValue(originUrl);
+    document.getElementById("clientMac").value = getQueryString("clientMac");
+    document.getElementById("clientIp").value = getQueryString("clientIp");
+    document.getElementById("apMac").value = getQueryString("apMac");
+    document.getElementById("ssidName").value = getQueryString("ssidName");
+    document.getElementById("radioId").value = getQueryString("radioId");
+    document.getElementById("authType").value = EXTERNAL_RADIUS;
+    document.getElementById("originUrl").value = getQueryString("originUrl");
     document.getElementById("password").value = FIXED_AUTH_PASSWORD;
 
     if (submitUrl) {
@@ -296,7 +221,7 @@ function initPortal() {
     button.dataset.defaultText = PORTAL_CONFIG.buttonText;
 
     populateHiddenFields();
-    handleReturnedErrorHint(getQueryStringKey("errorHint"));
+    handleReturnedErrorHint(getQueryString("errorHint"));
 
     document.getElementById("login-form").addEventListener("submit", handleFormSubmit);
 }
