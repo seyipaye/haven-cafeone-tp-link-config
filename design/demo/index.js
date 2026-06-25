@@ -124,15 +124,17 @@ var errorHintMap = {
 
 var isCommited;
 
-function showOperHint(message) {
+function showOperHint(message, type) {
     var hint = document.getElementById("oper-hint");
-    hint.innerHTML = message;
+    hint.textContent = message;
+    hint.className = type === "success" ? "toast-success" : "toast-error";
     hint.style.display = "block";
 }
 
 function hideOperHint() {
     var hint = document.getElementById("oper-hint");
-    hint.innerHTML = "";
+    hint.textContent = "";
+    hint.className = "";
     hint.style.display = "none";
 }
 
