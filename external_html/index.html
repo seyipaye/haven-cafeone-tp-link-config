@@ -1,33 +1,73 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<link rel="stylesheet" href="index.css" type="text/css" />
-<body class="portal">
-    <div id="oper-hint" style="color: red"></div>
 
-    <div class="oper-section-outer">
-        <div class="oper-section-inner">
-            <form id="login-form" method="post" accept-charset="UTF-8">
-                <input type="hidden" name="password" id="password" />
-                <input type="hidden" name="clientMac" id="clientMac" />
-                <input type="hidden" name="clientIp" id="clientIp" />
-                <input type="hidden" name="apMac" id="apMac" />
-                <input type="hidden" name="gatewayMac" id="gatewayMac" />
-                <input type="hidden" name="ssidName" id="ssidName" />
-                <input type="hidden" name="radioId" id="radioId" />
-                <input type="hidden" name="vid" id="vid" />
-                <input type="hidden" name="authType" id="authType" />
-                <input type="hidden" name="originUrl" id="originUrl" />
+<div id="errorHint" style="color:red"></div>
 
-                <div id="input-user" class="input-container">
-                    <span class="icon left-icon user"></span>
-                    <input id="username" class="oper-section-item input" name="username" type="email" placeholder="Enter your email to connect"/>
-                </div>
+<form id="form" method="get">   (External Web Portal Demo")
 
-                <button id="button-login" type="submit" class="button oper-section-item">Log In</button>
-            </form>
-        </div>
-    </div>
+    <div><span>username:</span><input type="text" id="username" name="username"/> </div>
 
-</body>
-<script src="index.js"></script>
+    <div><span>password:</span><input type="password" id="password" name="password"/></div>
+
+    <div style="display:none"><input type="text" id="clientMac" name="clientMac" /></div>
+
+          <div style="display:none"><input name="clientIp" id="clientIp"/></div>
+
+          <div style="display:none"><input name="apMac" id="apMac"/></div>
+
+          <div style="display:none"><input name="ssidName" id="ssidName"/></div>
+
+          <div style="display:none"><input name="radioId" id="radioId"/></div>
+			
+		  <div style="display:none"><input name="authType" id="authType"/></div>
+
+          <div style="display:none"><input name="originUrl" id="originUrl"/></div>
+
+          <button type="submit">submit</button>
+
+</form>
+
+ 
+
+<script type="text/javascript">
+
+var errorHint = getQueryString("errorHint")
+
+if (errorHint != null){
+
+          document.getElementById("errorHint").innerHTML = errorHint.replace(new RegExp('\\+', 'g'), ' ');
+
+}
+
+var submitUrl = "http://" + getQueryString("target") + ":" + getQueryString("targetPort") + "/portal/radius/browserauth";
+
+document.getElementById("form").action = submitUrl;
+
+document.getElementById("clientMac").value = getQueryString("clientMac");
+
+document.getElementById("clientIp").value = getQueryString("clientIp");
+
+document.getElementById("apMac").value = getQueryString("apMac");
+
+document.getElementById("ssidName").value = getQueryString("ssidName");
+
+document.getElementById("radioId").value = getQueryString("radioId");
+
+document.getElementById("authType").value = 2;
+
+document.getElementById("originUrl").value = getQueryString("originUrl");
+
+ 
+
+function getQueryString(name) {
+
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+
+    var r = window.location.search.substr(1).match(reg);
+
+if (r != null) return decodeURIComponent(r[2]); return null;
+
+}
+
+</script>
