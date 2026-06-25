@@ -78,6 +78,30 @@ function isMobile() {
     return isMobileDevice;
 }
 
+function getViewportWidth() {
+    return window.innerWidth || document.documentElement.clientWidth;
+}
+
+function isTabletViewport() {
+    var width = getViewportWidth();
+    return width >= 769 && width <= 1024;
+}
+
+function applyPortalDeviceClass() {
+    var portal = document.querySelector(".portal");
+    if (!portal) {
+        return;
+    }
+
+    portal.classList.remove("mobile", "tablet");
+
+    if (isMobile()) {
+        portal.classList.add("mobile");
+    } else if (isTabletViewport()) {
+        portal.classList.add("tablet");
+    }
+}
+
 var errorHintMap = {
     "0": "ok",
     "-1": "General error.",
@@ -284,6 +308,5 @@ Ajax.post(
     }
 );
 
-if (isMobile()) {
-    document.body.classList.add("mobile");
-}
+applyPortalDeviceClass();
+window.addEventListener("resize", applyPortalDeviceClass);
