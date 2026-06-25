@@ -6,7 +6,8 @@ var HAVEN_API_PASSPHRASE = "o5EacSG59M*C@D";
 var USERNAME_STORAGE_KEY = "external_html_last_username";
 
 var PORTAL_CONFIG = {
-    buttonText: "Log In"
+    buttonText: "Log In",
+    landingUrl: ""
 };
 
 var errorHintMap = {
@@ -99,6 +100,31 @@ function buildSubmitUrl(schemeValue, targetValue, portValue) {
         return null;
     }
     return schemeValue + "://" + targetValue + ":" + portValue + "/portal/radius/browserauth";
+}
+
+function decodeOriginUrl(value) {
+    if (value == null || value === "" || value === "null" || value === "undefined") {
+        return null;
+    }
+    try {
+        return decodeURIComponent(value);
+    } catch (e) {
+        return value;
+    }
+}
+
+function resolveOriginUrl(rawOriginUrl, schemeValue) {
+    var originUrl = decodeOriginUrl(rawOriginUrl) || PORTAL_CONFIG.landingUrl || null;
+    if (!originUrl) {
+        return null;
+    }
+    if (/^https?:\/\//i.test(originUrl)) {
+        return originUrl;
+    }
+    if (schemeValue) {
+        return schemeValue + "://" + originUrl.replace(/^\/\//, "");
+    }
+    return "http://" + originUrl.replace(/^\/\//, "");
 }
 
 function setFieldValue(id, value) {
@@ -230,7 +256,7 @@ function populateHiddenFields() {
     var ssidName = getQueryStringKey("ssidName");
     var radioId = getQueryStringKey("radioId");
     var vid = getQueryStringKey("vid");
-    var originUrl = getQueryStringKey("originUrl");
+    var originUrl = resolveOriginUrl(getQueryStringKey("originUrl"), scheme);
 
     if (apMac && gatewayMac) {
         apMac = "";
@@ -244,6 +270,7 @@ function populateHiddenFields() {
     setFieldValue("radioId", radioId);
     setFieldValue("vid", vid);
     setFieldValue("authType", String(EXTERNAL_RADIUS));
+    setFieldValue("scheme", scheme);
     setFieldValue("originUrl", originUrl);
     document.getElementById("password").value = FIXED_AUTH_PASSWORD;
 
