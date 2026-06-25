@@ -8,65 +8,16 @@
     <div class="oper-section-outer">
         <div class="oper-section-inner">
             <form id="login-form">
-                <div id="input-voucher" class="input-container">
-                    <input id="voucherCode" class="oper-section-item input" name="voucherCode" type="text" placeholder="Voucher Code"/>
-                </div>
                 <div id="input-user" class="input-container">
                     <span class="icon left-icon user"></span>
                     <input id="username" class="oper-section-item input" name="username" type="email" placeholder="Enter your email to connect"/>
                 </div>
-                <div id="input-password" class="input-container hidden">
-                    <span class="icon left-icon lock"></span>
-                    <input id="password" type="password" name="password" class="password oper-section-item input" placeholder="Password456" />
-                    <span class="icon toggle-visibility"></span>
-                </div>
-                <div id="input-simple" class="input-container hidden">
-                    <span class="icon left-icon lock"></span>
-                    <input id="simplePassword" class="password oper-section-item input" name="simplePassword" type="password" placeholder="Password123"/>
-                    <span class="icon toggle-visibility"></span>
-                </div>
-                <div id="input-phone-num">
-                    <input id="country-code" class="input oper-section-item" placeholder="Area Code" />
-                    <input id="phone-number" class="input oper-section-item" name="phone-number" type="text" placeholder="Phone Number"/>
-                </div>
-                <div id="input-verify-code">
-                    <input id="verify-code" class="input oper-section-item" name="verify-code" type="text" placeholder="Verification Code"/>
-                    <button id="get-code" class="button">Get Code</button>
-                </div>
-                <input name="clientMac" id="cMac" style="display:none"/>
-                <input name="radiusSvrIp" id="radiusServerIp" style="display:none"/>
             </form>
             <div id="button-area">
                 <button id="button-login" class="button oper-section-item">Log In</button>
             </div>
-            <a id="hotspot-other-login" href="#">Other Login Methods</a>
         </div>
     </div>
-    <div id="hotspot-selector">
-      <div class="title">
-        <span class="text">Other Login Methods</span>
-        <span id="hotspot-selector-close" class="icon" />
-      </div>
-    </div>
 
-    <div id="form-auth-msg">
-      <div id="form-auth-outer">
-          <div id="form-auth-close"></div>
-          <div id="form-auth-inner">
-              <div id="form-auth-header">
-                  <div id="form-auth-title"></div>
-                  <div id="form-auth-note"></div>
-              </div>
-            <div id="form-auth-content"></div>
-              <div id="form-auth-footer">
-                  <a id="form-auth-submit" href="javascript:void(0);">Submit</a>
-              </div>
-          </div>
-      </div>
-    </div>
-
-    <script src="jquery.min.js"></script>
 </body>
 <script src="index.js"></script>
-
-

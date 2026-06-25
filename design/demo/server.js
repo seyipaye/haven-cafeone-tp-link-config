@@ -61,17 +61,7 @@ async function handlePortalApi(req, res) {
     return;
   }
 
-  if (method === "POST" && url === "/portal/sendSmsAuthCode") {
-    sendJson(res, 200, { errorCode: 0 });
-    return;
-  }
-
-  if (
-    method === "POST" &&
-    (url === "/portal/auth" ||
-      url === "/portal/radius/auth" ||
-      url === "/portal/ldap/auth")
-  ) {
+  if (method === "POST" && url === "/portal/radius/auth") {
     setTimeout(function () {
       sendJson(res, 200, {
         errorCode: -41529,
@@ -104,8 +94,5 @@ server.listen(PORT, () => {
   console.log(`Portal demo running at http://localhost:${PORT}/index.html`);
   console.log("Mocked endpoints:");
   console.log("  POST /portal/getPortalPageSetting");
-  console.log("  POST /portal/auth");
   console.log("  POST /portal/radius/auth");
-  console.log("  POST /portal/ldap/auth");
-  console.log("  POST /portal/sendSmsAuthCode");
 });
