@@ -69,7 +69,7 @@ function buildSubmitUrl() {
     if (!target || !targetPort) {
         return null;
     }
-    return "http://" + target + ":" + targetPort + "/portal/radius/browserauth";
+    return "https://" + target + ":" + targetPort + "/portal/radius/browserauth";
 }
 
 function isMobile() {
