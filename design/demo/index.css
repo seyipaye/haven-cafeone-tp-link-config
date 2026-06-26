@@ -1,22 +1,33 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 html {
     height: 100%;
 }
 
-body.portal {
+body {
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100%;
+}
+
+
+
+.portal {
     text-align: center;
     margin: 0;
-    height: 100%;
+    height: 100vh;
+    width: 100vw;
     font-size: 16px;
     font-weight: 400;
     color: #2B2B2B;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    padding: 24px;
 
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
@@ -26,43 +37,71 @@ body.portal {
     background-repeat: no-repeat;
     background-position: center;
 }
-body.portal.mobile {
+
+.portal.mobile {
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
         url("background_mobile.png"),
         url("background_mobile.jpg");
+    overflow-y: auto;
+    padding: 0;
+}
+
+.portal.tablet {
+    overflow-y: auto;
+    padding: 32px;
 }
 
 .oper-section-outer {
-    width: 100%;
-    z-index: 10;
-    display: table;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    vertical-align: middle;
+    background-color: #00000026;
+    border-radius: 16px;
+}
+
+@media (min-width: 1025px) {
+    .oper-section-outer {
+        width: 60vw;
+        height: 70vh;
+        padding: 20px;
+    }
 }
 
 .oper-section-inner {
     display: flex;
-    flex-flow: column;
-    justify-content: center;
-    gap: 36px;
+    position: relative;
+    align-items: center;
+    /* padding: 40px 32px; */
+    padding: 70px 32px 40px;
     width: 100%;
-    height: 100%;
-    max-width: 335px;
-    margin: 0 auto;
-    vertical-align: middle;
+    max-width: 400px;
+    flex-direction: column;
+    gap: 28px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
     #login-form {
       display: flex;
       flex-flow: column;
       gap: 10px;
+      width: 100%;
+    }
+
+    img {
+        display: block;
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
     }
 }
 
 .oper-section-item {
     height: 50px;
     width: 100%;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .input {
@@ -84,7 +123,7 @@ body.portal.mobile {
     display: block;
     text-decoration: none;
     text-align: center;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 42px;
     outline: none;
@@ -127,8 +166,9 @@ body.portal.mobile {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0px 8px;
-  border-radius: 10px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #ECECEC;
   background-color: #fff;
   box-sizing: border-box;
 }
@@ -161,12 +201,172 @@ body.portal.mobile {
   display: none;
   position: absolute;
   left: 50%;
-  top: 100px;
+  top: 20px;
   transform: translateX(-50%);
-  z-index: 12;
-  padding: 16px 24px;
-  border-radius: 8px;
-  border: 1px solid #FFF;
+  /* z-index: 12; */
+  padding: 10px 16px;
+  margin: 0 auto;
+  width: 75%;
+  min-width: 200px;
+  /* border-radius: 8px; */
+  /* border: 1px solid #FFF;
   background: #FFF;
-  box-shadow: 0 4px 10px 0 rgba(43, 43, 43, 0.25);
+  box-shadow: 0 4px 10px 0 rgba(43, 43, 43, 0.25); */
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
+
+#oper-hint.toast-error {
+  background-color: #E0371D1A;
+  color: #E0371D;
+  
+}
+
+#oper-hint.toast-success {
+  background-color: #34A8530D;
+  color: #3C9E3C;
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+
+    h2 {
+        font-weight: 600;
+        font-size: 32px;
+        line-height: 1.2;
+    }
+
+    p {
+        color: #5E5E5E;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+}
+
+#button-area {
+    width: 100%;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .oper-section-outer {
+        width: auto;
+        height: auto;
+        max-width: 560px;
+        padding: 24px;
+    }
+
+    .oper-section-inner {
+        width: 100%;
+        max-width: 460px;
+        padding: 44px 40px;
+        gap: 28px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .oper-section-inner img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .text-content h2 {
+        font-size: 30px;
+    }
+
+    .text-content p {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .oper-section-outer {
+        width: 100%;
+        height: 100%;
+        padding: 24px 5%;
+        background-color: transparent;
+        border-radius: 0;
+    }
+
+    .oper-section-inner {
+        max-width: none;
+        width: 100%;
+        padding: 36px 28px;
+        gap: 24px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .oper-section-inner img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .text-content h2 {
+        font-size: 28px;
+    }
+
+    .text-content p {
+        font-size: 14px;
+    }
+}
+
+.portal.tablet .oper-section-outer {
+    width: auto;
+    height: auto;
+    max-width: 560px;
+    padding: 24px;
+}
+
+.portal.tablet .oper-section-inner {
+    width: 100%;
+    max-width: 460px;
+    padding: 44px 40px;
+    gap: 28px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.portal.tablet .oper-section-inner img {
+    width: 90px;
+    height: 90px;
+}
+
+.portal.tablet .text-content h2 {
+    font-size: 30px;
+}
+
+.portal.tablet .text-content p {
+    font-size: 15px;
+}
+
+.portal.mobile .oper-section-outer {
+    width: 100%;
+    height: 100%;
+    padding: 24px 5%;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+.portal.mobile .oper-section-inner {
+    max-width: none;
+    width: 100%;
+    padding: 36px 28px;
+    gap: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.portal.mobile .oper-section-inner img {
+    width: 80px;
+    height: 80px;
+}
+
+.portal.mobile .text-content h2 {
+    font-size: 28px;
+}
+
+.portal.mobile .text-content p {
+    font-size: 14px;
 }

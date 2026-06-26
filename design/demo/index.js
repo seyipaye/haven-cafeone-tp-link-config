@@ -78,6 +78,30 @@ function isMobile() {
     return isMobileDevice;
 }
 
+function getViewportWidth() {
+    return window.innerWidth || document.documentElement.clientWidth;
+}
+
+function isTabletViewport() {
+    var width = getViewportWidth();
+    return width >= 769 && width <= 1024;
+}
+
+function applyPortalDeviceClass() {
+    var portal = document.querySelector(".portal");
+    if (!portal) {
+        return;
+    }
+
+    portal.classList.remove("mobile", "tablet");
+
+    if (isMobile()) {
+        portal.classList.add("mobile");
+    } else if (isTabletViewport()) {
+        portal.classList.add("tablet");
+    }
+}
+
 var errorHintMap = {
     "0": "ok",
     "-1": "General error.",
@@ -100,15 +124,17 @@ var errorHintMap = {
 
 var isCommited;
 
-function showOperHint(message) {
+function showOperHint(message, type) {
     var hint = document.getElementById("oper-hint");
-    hint.innerHTML = message;
+    hint.textContent = message;
+    hint.className = type === "success" ? "toast-success" : "toast-error";
     hint.style.display = "block";
 }
 
 function hideOperHint() {
     var hint = document.getElementById("oper-hint");
-    hint.innerHTML = "";
+    hint.textContent = "";
+    hint.className = "";
     hint.style.display = "none";
 }
 
@@ -284,6 +310,5 @@ Ajax.post(
     }
 );
 
-if (isMobile()) {
-    document.body.classList.add("mobile");
-}
+applyPortalDeviceClass();
+window.addEventListener("resize", applyPortalDeviceClass);
